@@ -1,0 +1,65 @@
+{
+	"$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"$connections": {
+			"defaultValue": {}.
+			"type": "Object"
+		}
+	},
+	"triggers": {
+		"Microsoft_Sentinel_Incident": {
+			"type": "ApiConnectionWehook",
+			"inputs": {
+				"body": {
+					"callback_url": "@{listCallbackUrl()}"
+				},
+				"host": {
+					"connection": {
+						"name": "@parameters('$connections')['azuresentinel']['connectionid"
+					}
+				},
+				"path": "/incident-creation"
+			}
+		}
+	},
+	"actions": {
+		"Entities_-_Get_Accounts": {
+			"type": "ApiConnection",
+			"inputs": {
+				"body": "@triggerBody()?['object']?['properties]?['relatedEntities']",
+				"host": {
+					"connection": {
+						"name": "@parameters('$connections')['azuresentienl']['connectionId']"
+					}
+				},
+				"method": "post",
+				"path": "/entites/account"
+			}
+		},
+		"For_each_Account": {
+			"type": "Foreach",
+			"foreach": "@body('Entities_-_Get_ACcounts)?['Accounts']",
+			"actions": {
+				"type": "ApiConnection",
+				"inputs": {
+					"body": {
+						"accountEnabled": false
+					},
+					"host":{
+						"connection": {
+							"name": "@parameters('$connections')['azuread']['connectionId']"
+						}
+					},
+					"method": "patch",
+					"path": "/v1.0/users/@{encodeURIComponent(item())?['Name'])}"
+				}
+			},
+			"runAfter": {
+				"Entities_-_GotAccounts": [
+					"Succeeded"
+				]
+			}
+		}
+	}
+}
