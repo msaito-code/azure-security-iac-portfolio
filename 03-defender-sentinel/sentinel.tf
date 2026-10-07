@@ -1,18 +1,11 @@
-# 3. Onboard Sentinel to the Log Analytics Workspace
+# Onboard Sentinel to the Log Analytics Workspace
 resource "azurerm_sentinel_log_analytics_workspace_onboarding" "sentinel" {
 	workspace_id	= azurerm_log_analytics_workspace.log.id
 }
 
-# 4. Connect EntraID Logs (Simulating identity/network access logs)
-resource "azurerm_sentinel_data_connector_azure_active_directory" "aad" {
-	name				= "aad-connector"
-	log_analytics_workspace_id	= azurerm_log_analytics_workspace.log.id
-	tenant_id			= data.azurerm_client_config.current.tenant_id
-}
-
-# 5. KQL Analytics Rule: Detect Brite Force / Malicious Sign-ins
+# KQL Analytics Rule: Detect Brite Force / Malicious Sign-ins
 resource "azurerm_sentinel_alert_rule_scheduled" "detect_anomaly" {
-	name				= "detect-brute-force-01"
+	name				= "detect-brute-force"
 	log_analytics_workspace_id	= azurerm_log_analytics_workspace.log.id
 	display_name			= "Detect Multiple Failed Sign-ins"
 	severity			= "High"

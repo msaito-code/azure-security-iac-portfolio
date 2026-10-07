@@ -1,10 +1,10 @@
-# 1. Create Log Analytics Resource Group
+# Create Log Analytics Resource Group
 resource "azurerm_resource_group" "sentinel_rg" {
 	name		= "sentinel-soc-prod-rg"
 	location	= "eastus"
 }
 
-# 2. Create the Log Analytics Workspace
+# Create the Log Analytics Workspace
 resource "azurerm_log_analytics_workspace" "log" {
 	name			= "log-sentinel-workspace-01"
 	location		= azurerm_resource_group.sentinel_rg.location

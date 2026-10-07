@@ -1,9 +1,13 @@
-# 0. Terraform settings and provideris
+# Terraform settings and provideris
 terraform {
 	required_providers {
 		azurerm = {
 			source 	= "hashicorp/azurerm"
 			version = "~> 4.0"
+		}
+		azuread = {
+			source  = "hashicorp/azuread"
+			version	= "~> 2.0"
 		}
 	}
 
@@ -18,5 +22,7 @@ terraform {
 provider "azurerm" {
 	features {}
 }
+
+provider "azuread" {}
 
 data "azurerm_client_config" "current" {}

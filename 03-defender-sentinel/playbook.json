@@ -9,14 +9,14 @@
 	},
 	"triggers": {
 		"Microsoft_Sentinel_Incident": {
-			"type": "ApiConnectionWehook",
+			"type": "ApiConnectionWebhook",
 			"inputs": {
 				"body": {
 					"callback_url": "@{listCallbackUrl()}"
 				},
 				"host": {
 					"connection": {
-						"name": "@parameters('$connections')['azuresentinel']['connectionid']"
+						"name": "@parameters('$connections')['azuresentinel']['connectionId']"
 					}
 				},
 				"path": "/incident-creation"
@@ -27,32 +27,34 @@
 		"Entities_-_Get_Accounts": {
 			"type": "ApiConnection",
 			"inputs": {
-				"body": "@triggerBody()?['object']?['properties]?['relatedEntities']",
+				"body": "@triggerBody()?['object']?['properties']?['relatedEntities']",
 				"host": {
 					"connection": {
 						"name": "@parameters('$connections')['azuresentinel']['connectionId']"
 					}
 				},
 				"method": "post",
-				"path": "/entites/account"
+				"path": "/entities/account"
 			}
 		},
 		"For_each_Account": {
 			"type": "Foreach",
-			"foreach": "@body('Entities_-_Get_ACcounts)?['Accounts']",
+			"foreach": "@body('Entities_-_Get_Accounts')?['Accounts']",
 			"actions": {
-				"type": "ApiConnection",
-				"inputs": {
-					"body": {
-						"accountEnabled": false
-					},
-					"host":{
-						"connection": {
-							"name": "@parameters('$connections')['azuread']['connectionId']"
-						}
-					},
-					"method": "patch",
-					"path": "/v1.0/users/@{encodeURIComponent(item()?['Name'])}"
+				"Disable_User_Account": {
+					"type": "ApiConnection",
+					"inputs": {
+						"body": {
+							"accountEnabled": false
+						},
+						"host":{
+							"connection": {
+								"name": "@parameters('$connections')['azuread']['connectionId']"
+							}
+						},
+						"method": "patch",
+						"path": "/v1.0/users/@{encodeURIComponent(item()?['Name'])}"
+					}
 				}
 			},
 			"runAfter": {
