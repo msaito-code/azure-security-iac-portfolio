@@ -12,15 +12,5 @@ resource "azurerm_firewall_application_rule_collection" "aks_app_rules" {
 
 		# The AzureKubernetesService tag automatically includes mcr.microsoft.com
 		fqdn_tags		= ["AzureKubernetsService"]
-
-		protocol {
-			port = "443"
-			type = "Https"
-		}
-
-		protocol {
-			port = "80"
-			type = "Http"
-		}
 	}
 }

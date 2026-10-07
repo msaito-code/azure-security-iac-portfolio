@@ -41,7 +41,7 @@ resource "azurerm_kubernetes_cluster" "private_aks" {
 		auto_scaling_enabled	= true
 		min_count		= 1
 		max_count		= 3
-		os_disk_type		= "Ephemeral"
+		os_disk_type		= "Managed"
 
 		# Restrict system node pool to system critical workloads
 		only_critical_addons_enabled = true

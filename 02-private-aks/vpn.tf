@@ -23,7 +23,7 @@ resource "azurerm_virtual_network_gateway" "vpn_gateway" {
 
 	type			= "Vpn"
 	vpn_type		= "RouteBased"
-	sku			= "VpnGw1" # Cost-effective tier that supports OpenVPN
+	sku			= "VpnGw1AZ" # Cost-effective tier that supports OpenVPN
 
 	ip_configuration {
 		name				= "vnetGatewayConfig"
