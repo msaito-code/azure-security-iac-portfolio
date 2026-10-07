@@ -1,32 +1,64 @@
 # 6. Empty Logic App shell (Playbook logic is usually deployed via ARM template within this workflow)
-resource "azurerm_logic_app_workflow" "playbook" {
-	name			= "sentinel-playbook-block-ip"
-	location		= azurerm_resource_group.sentinel_rg.location
-	resoure_group_name	= azurerm_resource_group.sentinel_rg.name
+resource "azurerm_resource_group_template_deployment" "playbook" {
+	name			= "sentinel-playbook-deployment"
+	resource_group_name	= azurerm_resource_group.sentinel_rg.name
+	deployment_mode		= "Incremental"
 
-	# Map the Logic App to the API connections created in connection.tf
-	workflow_parameters = {
-		"$connection" = jsonencode({
-			azuresentinel ={
-				connectionId 	= azurerm_api_connection.sentinel_api.id
-				connectionName 	= "azuresentinel"
-				id		= "/subscriptions/${data.azurerm_client_config.current.subscription_id}/providers/Microsoft.Web/locations/${azurerm_resource_group.sentinel_rg.location}/managedApis/azuresentinel"
+	template_content = jsonencode({
+		"$schema": "https://schema.management.azure.com/providers/2019-04-01/deploymentTemplate.json",
+		"contentVersion": "1.0.0.0",
+		"parameters": {
+			"workflowName": { "type": "String" },
+			"location": { "type": "String" },
+			"sentinelConnectionId": { "type": "String" },
+			"azureadConnectionId":  { "type": "String" }
+		},
+		"resources": [
+			{
+				"type": "Microsoft.Logic/workflows",
+				"apiVersion": "2019-05-01",
+				"name": "[parameters('workflowName')]",
+				"location": "[parameters('location')]",
+				"properties": {
+					# Automatically puuls in your playbook.json file
+					"definition": jsonencode(file("${path.module}/playbook.json")),
+					"parameters": {
+						"$connections": {
+							"value": {
+								"azuresentinel": {
+
+									"connectionId": "[parameters('sentinelConnectionId')]",
+									"connectionName": "azuresentinel",
+									"id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', parameters('location'), '/managedApis/azuresentinel')]"
+								},
+								"azuread": {
+									"connectionId": "[parameters('azureadConnectionId')]",
+									"connectionName": "azuread",
+									"id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', paramters('location'), '/managedApis/azuread')]"
+								}
+							}
+						}
+					}
+				}
 			}
-			azuread = {
-				connectionId	= azurerm_api_connection.azuread_api.id
-				connectionName	= "azuread"
-				id		= "/subscription/${data.azurerm_client_config.current.subscription_id}/providers/Microsoft.Web/lcoations/${azurerm_resource_group.sentinel_rg.location}/managedApis/azuread"
-			}
-		})
-	}
+		]
+	})
+
+	# Pass the Terraform-generated API connection IDs into the ARM template
+	parameters_content = jsonencode({
+		"workflowName"		= { "value" = "sentinel-playbook-block-ip" }
+		"location"		= { "value" = azurerm_resource_group.sentinel_rg.location }
+		"sentinelConnectionId"	= { "value" = azurerm_api_connection.sentinel_api.id }
+		"azureadConnectionId"	= { "value" = azurerm_api_connection.azuread_api.id }
+	})
 }
 
 # 10. Attach the JSON workflow definition
-resource "azurerm_logic_app_action_custom" "workflow_logic" {
-	name		= "workflow-deployment"
-	logic_app_id	= azurerm_logic_app_workflow.playbook.id
-	body		= file("${path.module}/playbook.json")
-}
+#resource "azurerm_logic_app_action_custom" "workflow_logic" {
+#	name		= "workflow-deployment"
+#	logic_app_id	= azurerm_logic_app_workflow.playbook.id
+#	body		= file("${path.module}/playbook.json")
+#}
 
 # 7. Automation rule linking the Incident to the Playbook
 resource "azurerm_sentinel_automation_rule" "playbook_rule" {
@@ -36,13 +68,23 @@ resource "azurerm_sentinel_automation_rule" "playbook_rule" {
 	order				= 1
 
 	action_playbook {
-		logic_app_id 	= azurerm_logic_app_workflow.playbook.id
+		logic_app_id 	= "${azurerm_resource_group.sentinel_rg.id}/providers/Microsoft.Logic/workflows/sentinel-playbook-block-ip"
 		order 		= 1
 	}
 
-	condition {
-		operator = "Contains"
-		property = "IncidentTitle"
-		values	 = ["Detect Multiple Failed Sign-ins"]
-	}
+	condition_json = jsonencode([
+		{
+			conditionType = "Property"
+			conditionProperties = {
+				propertyName 	= "IncidentTitle"
+				operator	= "Contains"
+				values	 = ["Detect Multiple Failed Sign-ins"]
+			}
+		}
+	])
+
+	depends_on = [
+		azurerm_resource_group_template_deployment.playbook
+	]
+
 }

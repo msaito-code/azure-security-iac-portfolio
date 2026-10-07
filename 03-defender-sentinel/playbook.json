@@ -3,7 +3,7 @@
 	"contentVersion": "1.0.0.0",
 	"parameters": {
 		"$connections": {
-			"defaultValue": {}.
+			"defaultValue": {},
 			"type": "Object"
 		}
 	},
@@ -16,7 +16,7 @@
 				},
 				"host": {
 					"connection": {
-						"name": "@parameters('$connections')['azuresentinel']['connectionid"
+						"name": "@parameters('$connections')['azuresentinel']['connectionid']"
 					}
 				},
 				"path": "/incident-creation"
@@ -30,7 +30,7 @@
 				"body": "@triggerBody()?['object']?['properties]?['relatedEntities']",
 				"host": {
 					"connection": {
-						"name": "@parameters('$connections')['azuresentienl']['connectionId']"
+						"name": "@parameters('$connections')['azuresentinel']['connectionId']"
 					}
 				},
 				"method": "post",
@@ -52,11 +52,11 @@
 						}
 					},
 					"method": "patch",
-					"path": "/v1.0/users/@{encodeURIComponent(item())?['Name'])}"
+					"path": "/v1.0/users/@{encodeURIComponent(item()?['Name'])}"
 				}
 			},
 			"runAfter": {
-				"Entities_-_GotAccounts": [
+				"Entities_-_Get_Accounts": [
 					"Succeeded"
 				]
 			}
