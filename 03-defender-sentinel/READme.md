@@ -67,24 +67,12 @@ This module deploys the following structure:
 
 | File | Description |
 | --- | --- |
-| `connections.tf` | Creates the explicit API connection resources for Microsoft Sentinel and Azure AD to authorize Logic App actions.
-
- |
-| `main.tf` | Provisions the foundational Resource Group and the Log Analytics Workspace utilizing the `PerGB2018` SKU with a 30-day retention policy.
-
- |
-| `playbook.json` | Contains the visual JSON workflow definition for the Logic App, detailing the webhook trigger, entity extraction, and the Entra ID user-disabling loop.
-
- |
-| `playbook.tf` | Deploys the Logic App via an Incremental ARM Template, assigns RBAC permissions to the Sentinel Service Principal, and creates the Automation Rule linking the KQL alert to the playbook.
-
- |
-| `providers.tf` | Configures the `azurerm` and `azuread` providers (versions `~> 4.0` and `~> 2.0` respectively) and establishes the remote backend.
-
- |
-| `sentinel.tf` | Onboards Sentinel to the Log Analytics Workspace and deploys the high-severity KQL scheduled analytics rule to detect brute-force attacks.
-
- |
+| `connections.tf` | Creates the explicit API connection resources for Microsoft Sentinel and Azure AD to authorize Logic App actions. |
+| `main.tf` | Provisions the foundational Resource Group and the Log Analytics Workspace utilizing the `PerGB2018` SKU with a 30-day retention policy. |
+| `playbook.json` | Contains the visual JSON workflow definition for the Logic App, detailing the webhook trigger, entity extraction, and the Entra ID user-disabling loop. |
+| `playbook.tf` | Deploys the Logic App via an Incremental ARM Template, assigns RBAC permissions to the Sentinel Service Principal, and creates the Automation Rule linking the KQL alert to the playbook. |
+| `providers.tf` | Configures the `azurerm` and `azuread` providers (versions `~> 4.0` and `~> 2.0` respectively) and establishes the remote backend. |
+| `sentinel.tf` | Onboards Sentinel to the Log Analytics Workspace and deploys the high-severity KQL scheduled analytics rule to detect brute-force attacks. |
 
 ## 🛑 Workload Validation
 
