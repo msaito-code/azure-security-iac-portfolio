@@ -1,7 +1,7 @@
 # Network Resource Group
 resource "azurerm_resource_group" "network_rg" {
 	name		= "rg-secure-network-portfolio"
-	location	= "East US"
+	location	= var.location
 }
 
 # Hub Virtual Network
@@ -9,7 +9,7 @@ resource "azurerm_virtual_network" "hub_vnet" {
 	name			= "vnet-hub-eastus"
 	location		= azurerm_resource_group.network_rg.location
 	resource_group_name 	= azurerm_resource_group.network_rg.name
-	address_space 		= ["10.0.0.0/16"]
+	address_space 		= var.hub_address_space
 
 	tags = {
 		Environemnt 	= "Production"
@@ -22,7 +22,7 @@ resource "azurerm_virtual_network" "spoke1_vnet" {
 	name			= "vnet-spoke1-eastus"
 	location		= azurerm_resource_group.network_rg.location
 	resource_group_name	= azurerm_resource_group.network_rg.name
-	address_space		= ["10.1.0.0/16"]
+	address_space		= var.spoke1_address_space
 
 	tags = {
 		Environment 	= "Production"
@@ -35,7 +35,7 @@ resource "azurerm_virtual_network" "spoke2_vnet" {
 	name 			= "vnet-spoke2-eastus"
 	location		= azurerm_resource_group.network_rg.location
 	resource_group_name	= azurerm_resource_group.network_rg.name
-	address_space		= ["10.2.0.0/16"]
+	address_space		= var.spoke2_address_space
 
 	tags = {
 		Environment = "Production"
