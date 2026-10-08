@@ -1,5 +1,5 @@
 # Random string to ensure unique App Service name
-resource "random_strin" "suffix" {
+resource "random_string" "suffix" {
 	length	= 6
 	special	= false
 	upper	= false
@@ -15,7 +15,7 @@ resource "azurerm_public_ip" "appgw_ip" {
 }
 
 # WAF Policy
-resouce "azurerm_web_application_firewall_policy" "waf_policy" {
+resource "azurerm_web_application_firewall_policy" "waf_policy" {
 	name			= "wafpol-${var.prefix}"
 	location		= azurerm_resource_group.app_rg.location
 	resource_group_name	= azurerm_resource_group.app_rg.name
@@ -60,19 +60,15 @@ resource "azurerm_application_gateway" "appgw" {
 
 	frontend_ip_configuration {
 		name			= "fe-ip-config"
-		public_ip_address_id	= azurerm_public_ip.appgw_pip.id
+		public_ip_address_id	= azurerm_public_ip.appgw_ip.id
 	}
-
-	backend_address_pool {
-		name 	= "appservice-backend"
-		fqnds 	= [azure
 
 	backend_address_pool {
 		name	= "appservice-backend"
 		fqdns	= [azurerm_linux_web_app.app.default_hostname]
 	}
 
-	backend_https_settings {
+	backend_http_settings {
 		name					= "http-settings"
 		cookie_based_affinity			= "Disabled"
 		port					= 443 # Communicating securely to the backend
@@ -106,10 +102,10 @@ resource "azurerm_application_gateway" "appgw" {
 # App Service Plan (Premium SKU required for Private Endpoints)
 resource "azurerm_service_plan" "asp" {
 	name			= "asp-${var.prefix}"
-	lcaotion		= azurerm_resource_group.app_rg.location
+	location		= azurerm_resource_group.app_rg.location
 	resource_group_name	= azurerm_resource_group.app_rg.name
 	os_type			= "Linux"
-	sku_name		= "P1v2"
+	sku_name		= "P0v3"
 }
 
 # Linux Web App

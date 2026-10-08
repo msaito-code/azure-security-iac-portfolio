@@ -5,7 +5,7 @@ output "resource_group_name" {
 
 output "application_gateway_public_ip" {
 	description 	= "The public IP address of the Applciation Gateway"
-	value		= azurerm_public_ip.appgw_pip.ip_address
+	value		= azurerm_public_ip.appgw_ip.ip_address
 }
 
 output "app_service_default_hostname" {

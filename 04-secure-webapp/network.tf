@@ -4,7 +4,7 @@ resource "azurerm_resource_group" "app_rg" {
 }
 
 # Virtual Network
-resouce "azurerm_virtual_network" "vnet" {
+resource "azurerm_virtual_network" "vnet" {
 	name			= "vnet-${var.prefix}"
 	location		= azurerm_resource_group.app_rg.location
 	resource_group_name	= azurerm_resource_group.app_rg.name
@@ -14,8 +14,8 @@ resouce "azurerm_virtual_network" "vnet" {
 # Subnet for Appliaction Gateway
 resource "azurerm_subnet" "appgw_subnet" {
 	name			= "snet-appgw"
-	resource_group_name	= azruerm_resource_group.app_rg.name
-	virtual_network_name	= azurerm_virtual_network.appgw_vnet.name
+	resource_group_name	= azurerm_resource_group.app_rg.name
+	virtual_network_name	= azurerm_virtual_network.vnet.name
 	address_prefixes	= [var.appgw_subnet_prefix]
 }
 
@@ -34,7 +34,7 @@ resource "azurerm_private_dns_zone" "appservice_zone" {
 }
 
 # Link DNS Zone to VNet
-resource "azurerm_private_dns_zone_virtual_netowkr_link" "vnet_link" {
+resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
 	name			= "link-dns-vnet"
 	resource_group_name	= azurerm_resource_group.app_rg.name
 	private_dns_zone_name	= azurerm_private_dns_zone.appservice_zone.name

@@ -1,7 +1,7 @@
 variable "location" {
 	description 	= "Azure region for resources"
 	type		= string
-	default		= "eastus"
+	default		= "westus3"
 }
 
 variable "prefix" {
@@ -10,7 +10,7 @@ variable "prefix" {
 	default		= "portf-secweb"
 }
 
-variable "vnet_address-space" {
+variable "vnet_address_space" {
 	description	= "Address space for the VNet"
 	type		= list(string)
 	default		= ["10.1.0.0/16"]
