@@ -1,7 +1,7 @@
-# 4. Creating AKS Resource Group
+i 4. Creating AKS Resource Group
 resource "azurerm_resource_group" "aks_rg" {
 	name	 = "rg-aks-workload-portfolio"
-	location = azurerm_resource_group.network_rg.location
+	location = var.location
 }
 
 # 5. Create User Assigned Identity for AKS
@@ -20,7 +20,7 @@ resource "azurerm_role_assignment" "aks_dns_contributor" {
 
 # 7. Grant Private DNS Zone Contributor role to the Managed Identity for DNS updates
 resource "azurerm_kubernetes_cluster" "private_aks" {
-	name			= "aks-spoke1-eastus"
+	name			= "aks-spoke1-${azurerm_resource_group.aks_rg.location}"
 	location		= azurerm_resource_group.aks_rg.location
 	resource_group_name	= azurerm_resource_group.aks_rg.name
 	dns_prefix		= "aks-spoke1"
