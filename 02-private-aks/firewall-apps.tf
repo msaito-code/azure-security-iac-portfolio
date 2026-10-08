@@ -11,6 +11,6 @@ resource "azurerm_firewall_application_rule_collection" "aks_app_rules" {
 		source_addresses	= [azurerm_subnet.spoke1_subnet.address_prefixes[0]]
 
 		# The AzureKubernetesService tag automatically includes mcr.microsoft.com
-		fqdn_tags		= ["AzureKubernetsService"]
+		fqdn_tags		= ["AzureKubernetesService"]
 	}
 }

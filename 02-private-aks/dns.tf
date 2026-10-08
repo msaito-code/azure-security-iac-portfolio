@@ -1,6 +1,6 @@
 # 1. Create Private DNS Zone
 resource "azurerm_private_dns_zone" "aks_dns" {
-	name			= "privatelink.eastus.azmk8s.io"
+	name			= "privatelink.${var.location}.azmk8s.io"
 	resource_group_name	= azurerm_resource_group.network_rg.name
 }
 

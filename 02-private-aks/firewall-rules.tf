@@ -9,16 +9,16 @@ resource "azurerm_firewall_network_rule_collection" "aks_required_rules" {
 	# Core AKS outbound connectivity rules
 	rule {
 		name			= "aks-api-and-nodes"
-		source_addresses	= ["10.1.0.0/24"] # spoke1_subnet
-		destination_ports	= ["443", "1194", "9000"]
-		protocols		= ["UDP"]
+		source_addresses	= azurerm_subnet.spoke1_subnet.address_prefixes
+		destination_ports	= ["443", "9000"]
+		protocols		= ["TCP"]
 		destination_addresses	= ["*"]
 	}
 
 	rule {
 		name			= "time-sync-ntp"
-		source_addresses	= ["10.1.0.0/24"]
-		destination_ports	= ["123"]
+		source_addresses	= azurerm_subnet.spoke1_subnet.address_prefixes
+		destination_ports	= ["1194"]
 		protocols		= ["UDP"]
 		destination_addresses	= ["*"]
 	}
