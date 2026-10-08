@@ -24,3 +24,18 @@ This project demonstrates the deployment of a highly secure Azure App Service ar
 * [Terraform](https://www.terraform.io/downloads.html) installed (v1.0+).
 * Azure CLI installed and authenticated (`az login`).
 * An active Azure Subscription.
+
+1. **Initialize Terraform:**
+   ```bash
+   terraform init
+   ```
+
+2. **Initialize Terraform:**
+   ```bash
+   terraform plan -out=main.tfplan
+   ```
+
+3. **Initialize Terraform:**
+   ```bash
+   terraform apply "main.tfplan
+   ```
